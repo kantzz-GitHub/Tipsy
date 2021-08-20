@@ -19,13 +19,13 @@ class CalculatorViewController: UIViewController {
     var tipAmount: Float = 0.0
     var stepperValue: Float = 0.0
     var bill: Float = 0.0
+    var billSplit: Float = 0.0
     
     
     
     @IBAction func tipChanged(_ sender: UIButton) {
         updateUI()
         sender.isSelected = true
-//        print(sender.currentTitle!)
         tipString = sender.currentTitle!
         
         let billText = billTextField.text ?? "0.0"
@@ -36,9 +36,8 @@ class CalculatorViewController: UIViewController {
     }
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
-        sender.minimumValue = 0
+        sender.minimumValue = 1
         sender.stepValue = 1
-//        print(sender.value)
         stepperValue = Float(sender.value)
         updateUI()
         
@@ -61,17 +60,35 @@ class CalculatorViewController: UIViewController {
         
         print(bill)
         
+        billSplit = splitTheBill()
+        print(billSplit)
+        
+        performSegue(withIdentifier: "goToResults", sender: self)
+        
+        
     }
     
     func updateUI(){
         zeroPctButton.isSelected = false
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
+        
         splitNumberLabel.text = String(format: "%.0f", stepperValue)
     }
     
+    func splitTheBill() ->Float{
+        let answer = (bill * tipAmount + bill)/stepperValue
+        return answer
+    }
     
-
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToResults"{
+            let destinationVC = segue.destination as! ResultsViewController
+            destinationVC.result = billSplit
+            destinationVC.tipPercentage = tipAmount * 100
+            destinationVC.numberOfPeople = stepperValue
+        }
+    }
+    
 }
 
