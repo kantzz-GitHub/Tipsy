@@ -35,7 +35,8 @@ class CalculatorViewController: UIViewController {
         
         calculatorBrain.updateStepperValue(value: Float(sender.value))
 //        stepperValue = Float(sender.value)
-        updateUI()
+        splitNumberLabel.text = String(format: "%.0f", calculatorBrain.getStepperValue())
+        billTextField.endEditing(true)
         
         
     
@@ -71,7 +72,7 @@ class CalculatorViewController: UIViewController {
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
         
-        splitNumberLabel.text = String(format: "%.0f", calculatorBrain.getStepperValue())
+        
 //        splitNumberLabel.text = String(format: "%.0f", stepperValue)
     }
     
