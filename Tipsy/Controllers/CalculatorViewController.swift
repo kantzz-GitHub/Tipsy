@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  Tipsy
-//
-//  Created by Angela Yu on 09/09/2019.
-//  Copyright © 2019 The App Brewery. All rights reserved.
-//
-
 import UIKit
 
 class CalculatorViewController: UIViewController {
@@ -15,22 +7,24 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var twentyPctButton: UIButton!
     @IBOutlet weak var splitNumberLabel: UILabel!
     
-    var tipString: String!
-    var tipAmount: Float = 0.0
-    var stepperValue: Float = 0.0
-    var bill: Float = 0.0
-    var billSplit: Float = 0.0
+//    var tipString: String!
+//    var tipAmount: Float = 0.0
+//    var stepperValue: Float = 0.0
+//    var bill: Float = 0.0
+//    var billSplit: Float = 0.0
     
-    
+    var calculatorBrain = CalculatorBrain()
     
     @IBAction func tipChanged(_ sender: UIButton) {
         updateUI()
         sender.isSelected = true
-        tipString = sender.currentTitle!
+        calculatorBrain.updateTipString(tip: sender.currentTitle!)
+//        tipString = sender.currentTitle!
         
         let billText = billTextField.text ?? "0.0"
         
-        bill = (billText as NSString).floatValue
+        calculatorBrain.updateBill(value: (billText as NSString).floatValue)
+//        bill = (billText as NSString).floatValue
         billTextField.endEditing(true)
         
     }
@@ -38,7 +32,9 @@ class CalculatorViewController: UIViewController {
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         sender.minimumValue = 1
         sender.stepValue = 1
-        stepperValue = Float(sender.value)
+        
+        calculatorBrain.updateStepperValue(value: Float(sender.value))
+//        stepperValue = Float(sender.value)
         updateUI()
         
         
@@ -46,22 +42,24 @@ class CalculatorViewController: UIViewController {
     }
     
     @IBAction func calculatePressed(_ sender: UIButton) {
-        if tipString == "10%"{
-            tipAmount = 0.1
-        } else if tipString == "20%"{
-            tipAmount = 0.2
-        } else {
-            tipAmount = 0.0
-        }
+        calculatorBrain.updateTipAmount()
+//        if tipString == "10%"{
+//            tipAmount = 0.1
+//        } else if tipString == "20%"{
+//            tipAmount = 0.2
+//        } else {
+//            tipAmount = 0.0
+//        }
+//
+//        print(tipAmount)
+//
+//        print(stepperValue)
+//
+//        print(bill)
         
-        print(tipAmount)
-        
-        print(stepperValue)
-        
-        print(bill)
-        
-        billSplit = splitTheBill()
-        print(billSplit)
+        calculatorBrain.updateBillSplit()
+//        billSplit = splitTheBill()
+//        print(billSplit)
         
         performSegue(withIdentifier: "goToResults", sender: self)
         
@@ -73,20 +71,24 @@ class CalculatorViewController: UIViewController {
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
         
-        splitNumberLabel.text = String(format: "%.0f", stepperValue)
+        splitNumberLabel.text = String(format: "%.0f", calculatorBrain.getStepperValue())
+//        splitNumberLabel.text = String(format: "%.0f", stepperValue)
     }
     
-    func splitTheBill() ->Float{
-        let answer = (bill * tipAmount + bill)/stepperValue
-        return answer
-    }
+//    func splitTheBill() ->Float{
+//        let answer = (bill * tipAmount + bill)/stepperValue
+//        return answer
+//    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToResults"{
             let destinationVC = segue.destination as! ResultsViewController
-            destinationVC.result = billSplit
-            destinationVC.tipPercentage = tipAmount * 100
-            destinationVC.numberOfPeople = stepperValue
+            destinationVC.result = calculatorBrain.getBillSplit()
+            destinationVC.tipPercentage = calculatorBrain.getTipPercentage()
+            destinationVC.numberOfPeople = calculatorBrain.getStepperValue()
+//            destinationVC.result = billSplit
+//            destinationVC.tipPercentage = tipAmount * 100
+//            destinationVC.numberOfPeople = stepperValue
         }
     }
     
